@@ -53,10 +53,12 @@
 #include <sysexits.h>
 #include <unistd.h>
 
-static int flag_a, flag_b, flag_B, flag_c, flag_C, flag_d, flag_o, flag_p, \
+static int flag_a, flag_b, flag_B, flag_c, flag_C, flag_d, flag_o, flag_p,
 	   flag_s;
 static int flag_I = 1000000;
 
+#define HIGH_PCT_BUSY_THRESH 80
+#define MEDIUM_PCT_BUSY_THRESH 50
 #define PRINTMSG(...) do {						\
 		if ((flag_b && !loop) || (flag_B))			\
 			printf(__VA_ARGS__);				\
@@ -235,7 +237,7 @@ main(int argc, char **argv)
 		if (!flag_b)
 			move(0,0);
 		if (!flag_C)
-			PRINTMSG("dT: %5.3fs  w: %.3fs", dt, 
+			PRINTMSG("dT: %5.3fs  w: %.3fs", dt,
 					(float)flag_I / 1000000);
 		if (!flag_C && f_s[0] != '\0') {
 			PRINTMSG("  filter: ");
@@ -271,8 +273,7 @@ main(int argc, char **argv)
 				if (flag_s) {
 					PRINTMSG(" d/s     kB   kBps");
 					PRINTMSG("   ms/d   ");
-				}
-				else
+				} else
 					PRINTMSG(" d/s   kBps   ms/d   ");
 			}
 			if (flag_o)
@@ -285,8 +286,7 @@ main(int argc, char **argv)
 				PRINTMSG(",read-KiB/s,ms/read");
 				PRINTMSG(",write/s,write_sz-KiB");
 				PRINTMSG(",write-KiB/s,ms/write");
-			}
-			else {
+			} else {
 				PRINTMSG(",read/s,read-KiB/s,ms/read");
 				PRINTMSG(",write/s,write-KiB/s,ms/write");
 			}
@@ -294,8 +294,7 @@ main(int argc, char **argv)
 				if (flag_s) {
 					PRINTMSG(",delete/s,delete-sz-KiB");
 					PRINTMSG(",delete-KiB/s,ms/delete");
-				}
-				else {
+				} else {
 					PRINTMSG(",delete/s,delete-KiB/s");
 					PRINTMSG(",ms/delete");
 				}
@@ -444,8 +443,7 @@ main(int argc, char **argv)
 								(double)ld[12]);
 				}
 				PRINTMSG(",%.1lf", (double)ld[7]);
-			}
-			else {
+			} else {
 				PRINTMSG(" %4ju", (uintmax_t)u64);
 				PRINTMSG(" %6.0f", (double)ld[0]);
 				PRINTMSG(" %6.0f", (double)ld[1]);
@@ -490,9 +488,9 @@ main(int argc, char **argv)
 								(double)ld[12]);
 				}
 
-				if (ld[7] > 80)
+				if (ld[7] > HIGH_PCT_BUSY_THRESH)
 					i = 3;
-				else if (ld[7] > 50)
+				else if (ld[7] > MEDIUM_PCT_BUSY_THRESH)
 					i = 2;
 				else 
 					i = 1;
